@@ -60,14 +60,10 @@ public class Sistema {
 	 * Ela da um shift para direita e exclui o produto
 	 * */
 	boolean excluir(int codigo) {
-		if(codigo > 0 && !realizouVenda(codigo)) {
+		if(codigo > 0) {
 			for(int i = 0; i < qntdProdutos; i++) {
 				if(produtos[i] != null && produtos[i].getCodigo() == codigo) {
-					for(int j = i; j < produtos.length - 1; j++) {
-						produtos[j] = produtos[j+1];
-					}
-					qntdProdutos--;
-					produtos[qntdProdutos] = null;
+					produtos[i].setEstado(false);
 					return true;
 				}
 			}
@@ -75,15 +71,7 @@ public class Sistema {
 		}
 		return false;
 	}
-	
-	boolean realizouVenda(int codigo) {
-		for(int i = 0; i < qntdVendas; i++) {
-			if(vendas[i].getCodigo() == codigo) 
-				return true;
-		}
-		return false;
-	}
-	
+
 	/*A função editar(Produto) recebe um Produto e faz as verificações, caso haja um produto com o mesmo nome
 	 * do produto recebido, a função retorna falso.
 	 * Caso nao haja nenhum produto com o mesmo nome, ela vai procurar o produto da lista de produtos com o mesmo
@@ -113,12 +101,9 @@ public class Sistema {
 		if(codigo > 0) {
 			for(int i = 0; i < produtos.length; i++) {
 				if(produtos[i].getCodigo() == codigo) {
-					Produto paux = new Produto();
-					paux.setCodigo(produtos[i].getCodigo());
-					paux.setNome(produtos[i].getNome());
-					paux.setMarca(produtos[i].getMarca());
-					paux.setPreco(produtos[i].getPreco());
-					paux.setQuantEmEstoque(produtos[i].getQuantEmEstoque());
+					Produto paux;
+					paux = new Produto(produtos[i].getCodigo(),  produtos[i].getNome(), produtos[i].getPreco(), produtos[i].getQuantEmEstoque(), produtos[i].getMarca(),
+							  produtos[i].getEstado());
 					
 					return paux;
 				}
@@ -137,12 +122,9 @@ public class Sistema {
 		if(!verificarNomeProduto(nome)) {
 			for(int i = 0; i < produtos.length; i++) {
 				if(produtos[i].getNome().equalsIgnoreCase(nome)) {
-					Produto paux = new Produto();
-					paux.setCodigo(produtos[i].getCodigo());
-					paux.setNome(produtos[i].getNome());
-					paux.setMarca(produtos[i].getMarca());
-					paux.setPreco(produtos[i].getPreco());
-					paux.setQuantEmEstoque(produtos[i].getQuantEmEstoque());
+					Produto paux;
+					paux = new Produto(produtos[i].getCodigo(),  produtos[i].getNome(), produtos[i].getPreco(), produtos[i].getQuantEmEstoque(), produtos[i].getMarca(),
+							  produtos[i].getEstado());
 					
 					return paux;
 				}
@@ -157,17 +139,15 @@ public class Sistema {
 	 * definido na classe, e sim um vetor com a cópia dos seus valores.
 	 * */
 	
-	Produto[] listarTodos() {
+	public Produto[] listarTodos() {
 		//return produtos;
 		
 		Produto[] paux = new Produto[qntdProdutos];
 		for(int i = 0; i < qntdProdutos; i++) {
-			paux[i] = new Produto();
-			paux[i].setCodigo(produtos[i].getCodigo());
-			paux[i].setNome(produtos[i].getNome());
-			paux[i].setMarca(produtos[i].getMarca());
-			paux[i].setPreco(produtos[i].getPreco());
-			paux[i].setQuantEmEstoque(produtos[i].getQuantEmEstoque());
+			if(produtos[i].getEstado() != false) 
+				paux[i] = new Produto(produtos[i].getCodigo(),  produtos[i].getNome(), produtos[i].getPreco(), produtos[i].getQuantEmEstoque(), produtos[i].getMarca(),
+						  produtos[i].getEstado());
+			
 		}
 		
 		return paux;
@@ -190,7 +170,7 @@ public class Sistema {
 	/*A função vetorOrdenado() retorna o vetor de produtos ordenado pela ordem alfabética
 	 * */
 	public Produto[] vetorOrdenado() {
-        Produto auxP = new Produto();
+        Produto auxP;
         Produto[] vetAux = listarTodos();
         for (int i = 0; i < qntdProdutos; i++) {
             for (int j = i + 1; j < qntdProdutos; j++) {
@@ -225,13 +205,39 @@ public class Sistema {
 	public boolean addVenda(Venda venda) {
 		if(venda != null) {
 			vendas[qntdVendas] = venda;
+			vendas[qntdVendas].setCodigo(qntdVendas);
 			for(int i = 0; i < venda.getItensVendidos().length; i++) {
 				descontarProdutos(venda.getItensVendidos()[i].getProduto().getCodigo(), venda.getItensVendidos()[i].getQuantidade());
 			}
+
 			qntdVendas++;
 			return true;
 		}
-		
 		return false;
+	}
+	
+	public Venda[] retornaVendas() {
+		Venda[] venda = new Venda[20];
+		
+		for(int i = 0; i < venda.length; i++) 
+			if(vendas[i] != null) {
+				venda[i] = Venda.getInstance(vendas[i].getData(), vendas[i].getNomeCliente(), vendas[i].getPrecoTotal());
+				venda[i].setCodigo(vendas[i].getCodigo());
+			}
+		return venda;
+	}
+	
+	
+	public Venda retornaVendaPorCodigo(int codigo) {
+		Venda venda = null;
+		for(int i = 0; i < vendas.length; i++) {
+			if(vendas[i] != null && (vendas[i].getCodigo()+1) == codigo) {
+				venda = Venda.getInstance(vendas[i].getData(), vendas[i].getNomeCliente(), vendas[i].getPrecoTotal());
+				venda.setItensVendidos(vendas[i].getItensVendidos());
+				venda.setCodigo(vendas[i].getCodigo());
+			}
+		}
+		
+		return venda;
 	}
 }

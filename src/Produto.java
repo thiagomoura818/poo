@@ -5,17 +5,36 @@ public class Produto {
 	private double preco;
 	private int quantEmEstoque;
 	private String marca;
-	
-	public Produto() {
+	private boolean estado;
 		
+	public Produto(int codigo, String nome, double preco, int quantEmEstoque, String marca, boolean estado) {
+		this.codigo = codigo;
+		this.nome = nome;
+		this.preco = preco;
+		this.quantEmEstoque = quantEmEstoque;
+		this.marca = marca;
+		
+		this.estado = estado;
 	}
-		
+	
+	//implementaçao padrao
+	
 	public Produto (int codigo, String nome, double preco, int quantEmEstoque, String marca) {
 		this.codigo = codigo;
 		this.nome = nome;
 		this.preco = preco;
 		this.quantEmEstoque = quantEmEstoque;
 		this.marca = marca;
+		
+		this.estado = true;
+	}
+	
+	public void setEstado(boolean estado) {
+		this.estado = estado;
+	}
+	
+	public boolean getEstado() {
+		return this.estado;
 	}
 	
 	public int getCodigo() {

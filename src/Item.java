@@ -4,6 +4,8 @@ public class Item {
 	private int quantidade;
 	private Produto produto;
 	
+	
+	
 	private Item(double preco, int quantidade, Produto produto) {
 		this.preco = preco;
 		this.quantidade = quantidade;
