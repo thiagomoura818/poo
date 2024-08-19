@@ -1,3 +1,4 @@
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -5,7 +6,8 @@ import java.util.Scanner;
 public class Main {
 	static Scanner sc = new Scanner(System.in);
 	static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	public static void main(String[] args) {
+	
+	public static void main(String[] args) throws ParseException {
 		Sistema s = Sistema.getInstance();
 		init(s);
 		
@@ -40,9 +42,8 @@ public class Main {
 			System.out.println("\n-------- MÓDULO ATENDENTE -------- ");
 			System.out.println("0 - SAIR");
 			System.out.println("1 - ADICIONAR ITEM AO CARRINHO");
-			System.out.println("2 - REMOVER ITEM DO CARRINHO");
-			System.out.println("3 - LISTAR ITENS DO CARRINHO");
-			System.out.println("4 - GERAR VENDA");
+			System.out.println("2 - LISTAR ITENS DO CARRINHO");
+			System.out.println("3 - GERAR VENDA");
 			System.out.print("\n -> Digite a opção desejada: ");
 			opcao = sc.nextInt();
 			System.out.println("");
@@ -76,25 +77,29 @@ public class Main {
 					
 					break;
 				case 2:
-					
-					break;
-				case 3:
 					listarItensCarrinho(carrinho, tamanho);
 					break;
-				case 4:
+				case 3:
 					Item itensVendidos[] = carrinho.getItems();
 					System.out.println("Digite o nome do cliente: ");
 					String nomeCliente = sc.next();
-					Venda venda = Venda.getInstance(new Date(), nomeCliente, calculaPrecoTotal(itensVendidos));
-					venda.setItensVendidos(itensVendidos);
 					
-					if(s.addVenda(venda)) {
-						System.out.println("Venda realizada com sucesso!");
+					if(!nomeCliente.equalsIgnoreCase("") && nomeCliente != null && calculaPrecoTotal(itensVendidos)
+							> 0) {
+						Venda venda = Venda.getInstance(new Date(), nomeCliente, calculaPrecoTotal(itensVendidos));
+						venda.setItensVendidos(itensVendidos);
+
+						if(s.addVenda(venda)) 
+							System.out.println("Venda realizada com sucesso!");
+						else
+							System.out.println("Erro ao finalizar venda!");
 					}else {
-						System.out.println("Erro ao finalizar venda!");
+						System.out.println("Não foi possível concluir a venda!");
 					}
 					
 					carrinho = new Carrinho();
+					break;
+				default:
 					break;
 			}
 		}while(opcao != 0);
@@ -127,7 +132,7 @@ public class Main {
 			
 			switch (opcao) {
 			case 0:
-				System.out.println("Encerrando o programa");
+				System.out.println("Encerrando a sessão de administrador");
 				break;
 			case 1:
 				adicionarProduto(s);
@@ -157,25 +162,44 @@ public class Main {
 			} while (opcao != 0);
 	}
 	
-	static void init(Sistema s) {
+	static void init(Sistema s) throws ParseException {
 		Produto produto;	
+		Item item;
+		Item[] itensVendidos = new Item[2];
+		Item[] itensVendidos1 = new Item[3];
+		
 		produto = new Produto(1, "Arroz 5kg", 21.00, 1000, "Rivieira");
 		s.inserir(produto);
+		item = Item.getInstance(2, produto);
+		itensVendidos[0] = item;
 		
 		produto = new Produto(2, "Azeite 250ml", 45.00, 936, "Costa Doce");
-
 		s.inserir(produto);
+		item = Item.getInstance(3, produto);
+		itensVendidos[1] = item;
 		
-		produto = new Produto(3, "Margarina", 5.29, 850, "Qualy");	
-
+		produto = new Produto(3, "Margarina", 5.29, 850, "Qualy");
 		s.inserir(produto);
+		item = Item.getInstance(4, produto);
+		itensVendidos1[0] = item;
 		
 		produto = new Produto(4, "Café", 20.99, 256, "Pilão");	
 		s.inserir(produto);
+		item = Item.getInstance(5, produto);
+		itensVendidos1[1] = item;
 		
-		produto = new Produto(4, "Picanha", 149.98, 28, "Maturatta");	
-		
+		produto = new Produto(5, "Picanha", 149.98, 28, "Maturatta");	
 		s.inserir(produto);
+		item = Item.getInstance(6, produto);
+		itensVendidos1[2] = item;
+
+		Venda venda = Venda.getInstance(sdf.parse("08/08/2024"), "João", calculaPrecoTotal(itensVendidos));
+		venda.setItensVendidos(itensVendidos);
+		s.addVenda(venda);
+		
+		venda = Venda.getInstance(sdf.parse("14/08/2024"), "Joaquim", calculaPrecoTotal(itensVendidos1));
+		venda.setItensVendidos(itensVendidos1);
+		s.addVenda(venda);
 	}
 	
 	public static void menuListagemVendas(Sistema s, int espaco) {
@@ -464,4 +488,5 @@ public class Main {
 			System.out.printf("\nPreco total: %.2f", venda.getPrecoTotal());
 		}
 	}
+	
 }

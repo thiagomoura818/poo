@@ -1,4 +1,3 @@
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Venda {
@@ -8,8 +7,6 @@ public class Venda {
 	private String nomeCliente;
 	
 	private double precoTotal;
-	
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private Venda(Date data, String nomeCliente, double precoTotal) {
 		this.nomeCliente = nomeCliente;
