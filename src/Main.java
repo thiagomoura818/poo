@@ -61,26 +61,29 @@ public class Main {
 					
 					System.out.println("\nDigite a quantidade dos produtos a serem adicionados no carrinho");
 					int quantidade = sc.nextInt();
-					
-					if(quantidade > produto.getQuantEmEstoque()) {
-						System.out.println("Não é possível colocar uma quantidade maior "
-								+ "do que a quantidade em estoque");
-						break;
-					}
-					
-					Item item = Item.getInstance(quantidade, produto);
-					
-					if(carrinho.addItem(item))
-						System.out.println("Item adicionado ao carrinho com sucesso!");
-					else
-						System.out.println("Erro ao adicionar o item ao carrinho!");
+
+					int quantidadeSomada = quantidade + carrinho.quantidadeAtual(codigo);
+					if(s.verificaQuantidade(codigo, quantidadeSomada)) {
+						Item item = Item.getInstance(quantidade, produto);
+						
+						if(carrinho.addItem(item))
+							System.out.println("Item adicionado ao carrinho com sucesso!");
+						else
+							System.out.println("Erro ao adicionar o item ao carrinho!");
+						
+
+					}else 
+						System.out.println("Você não pode adicionar mais produtos do que o de estoque");
 					
 					break;
+					
 				case 2:
 					listarItensCarrinho(carrinho, tamanho);
 					break;
 				case 3:
 					Item itensVendidos[] = carrinho.getItems();
+
+					
 					System.out.println("Digite o nome do cliente: ");
 					String nomeCliente = sc.next();
 					

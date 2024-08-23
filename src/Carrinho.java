@@ -38,4 +38,13 @@ public class Carrinho {
 		}
 		return -1;
 	}
+	
+	public int quantidadeAtual(int codigoProduto) {
+		for(int i = 0; i < itens.length; i++) {
+			if(codigoProduto > 0 && itens[i]!= null && itens[i].getProduto().getCodigo() == codigoProduto)
+				return itens[i].getQuantidade();
+		}
+		
+		return -1;
+	}
 }

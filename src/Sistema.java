@@ -240,4 +240,14 @@ public class Sistema {
 		
 		return venda;
 	}
+	
+	public boolean verificaQuantidade(int codigoProduto, int quantidade) {
+		for(int i = 0; i < produtos.length; i++) {
+			if(produtos[i] != null && produtos[i].getCodigo() == codigoProduto)
+				if(quantidade > produtos[i].getQuantEmEstoque())
+					return false;				
+		}
+		
+		return true;
+	}
 }
